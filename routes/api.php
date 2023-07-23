@@ -21,3 +21,4 @@ use App\Http\Controllers\Api\CallbackController;
 
 
 Route::post('webhook',[CallbackController::class,'whatsappCallback']);
+Route::get('webhook',[CallbackController::class,'whatsappCallback']);

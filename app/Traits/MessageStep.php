@@ -115,6 +115,7 @@ trait MessageStep
                               }
   
                           $response =$this->textSms($log->phone_number,"Thanks For Contact us We will revert back to you soon"); 
+                          $response_2 =$this->companyAddress($log->phone_number);
                           return $response;
                         }
 

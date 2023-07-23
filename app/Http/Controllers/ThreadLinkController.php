@@ -80,8 +80,16 @@ class ThreadLinkController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        //
+        $uuid =$request->uuid;
+        $thread =ThreadLink::where('uuid',$uuid)->first();
+       // $thread->responses()->delete();
+        $thread->delete();
+
+        return response()->json([
+            'success' =>true,
+            'message' =>'Action done successfully'
+        ],200);
     }
 }

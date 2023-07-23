@@ -155,7 +155,7 @@
     },
     function(){
       $.ajax({
-            url: "{{ route('delete.thread')}}", 
+            url: "{{ route('delete.thread.link')}}", 
             method: "POST",
             data: {uuid:id,'_token':csrf_tokken,action:'activate'},
             success: function(response)

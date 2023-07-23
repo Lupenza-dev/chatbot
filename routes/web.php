@@ -33,11 +33,13 @@ Route::get('logout',[LoginController::class,'logout'])->name('logout');
 
 
 Route::group(['middleware'=>'auth'],function(){
-       Route::get('dashboard',[DashBoardController::class,'index'])->name('dashboard');
+      // Route::get('dashboard',[DashBoardController::class,'index'])->name('dashboard');
+       Route::get('dashboard',[ThreadController::class,'index'])->name('dashboard');
        Route::post('update/threads',[ThreadController::class,'update'])->name('update.threads');
        Route::post('update/responses',[ResponseController::class,'update'])->name('update.responses');
        Route::post('delete/responses',[ResponseController::class,'destroy'])->name('delete.response');
        Route::post('delete/thread',[ThreadController::class,'destroy'])->name('delete.thread');
+       Route::post('delete/thread/link',[ThreadLinkController::class,'destroy'])->name('delete.thread.link');
 
        Route::resources([
         'threads'            =>ThreadController::class,
