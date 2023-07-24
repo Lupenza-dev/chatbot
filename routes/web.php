@@ -40,6 +40,9 @@ Route::group(['middleware'=>'auth'],function(){
        Route::post('delete/responses',[ResponseController::class,'destroy'])->name('delete.response');
        Route::post('delete/thread',[ThreadController::class,'destroy'])->name('delete.thread');
        Route::post('delete/thread/link',[ThreadLinkController::class,'destroy'])->name('delete.thread.link');
+       Route::post('delete/response/link',[ThreadLinkController::class,'destroyResponseLink'])->name('delete.response.link');
+       Route::get('response/links',[ThreadLinkController::class,'responseLink'])->name('response.links');
+       Route::post('store/response/links',[ThreadLinkController::class,'responseLinkStore'])->name('response.links.store');
 
        Route::resources([
         'threads'            =>ThreadController::class,

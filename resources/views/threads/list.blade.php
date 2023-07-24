@@ -42,26 +42,30 @@
                                         <tr>
                                             <th scope="col"></th>
                                             <th scope="col">Step</th>
-                                            <th scope="col" width="60%">Name</th>
+                                            <th scope="col">Name</th>
+                                            <th width="20%">Label</th>
+                                            <th>Thread Type</th>
                                             <th>Created At</th>
                                             <th scope="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($messages as $message)
+                                        @foreach ($threads as $thread)
                                         <tr style="margin-top: 20px; margin-bottom: 20px">
                                             <td><span class="bx bx-chat"></span></td>
-                                            <td>{{ $message->step }}</td>
-                                            <td>{{ $message->title_eng }}</td>
-                                            <td>{{ $message->created_at}}</td>
+                                            <td>{{ $thread->step }}</td>
+                                            <td>{{ $thread->title_eng }}</td>
+                                            <td width="20%">{{ $thread->label}}</td>
+                                            <td>{{ $thread->thread_type }}</td>
+                                            <td>{{ $thread->created_at}}</td>
                                             <td>
-                                                <a href="{{ route('responses.index',['uuid' =>$message->uuid]) }}">
+                                                <a href="{{ route('responses.index',['uuid' =>$thread->uuid]) }}">
                                                  <button type="button" class="btn btn-outline-primary btn-sm btn-icon"><i class="ri-mail-send-line"></i></button>
                                                 </a>
-                                                <a href="{{ route('threads.edit',$message->uuid )}}">
+                                                <a href="{{ route('threads.edit',$thread->uuid )}}">
                                                 <button type="button" class="btn btn-outline-success btn-sm btn-icon"><i class=" ri-edit-2-line"></i></button>
                                                 </a>
-                                                <button type="button" id="{{ $message->uuid}}" onclick="deleteThread(id)" class="btn btn-outline-danger btn-sm btn-icon"><i class=" ri-delete-bin-5-line"></i></button>
+                                                <button type="button" id="{{ $thread->uuid}}" onclick="deleteThread(id)" class="btn btn-outline-danger btn-sm btn-icon"><i class=" ri-delete-bin-5-line"></i></button>
 
                                             </td>
                                         </tr> 

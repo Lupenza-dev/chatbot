@@ -27,6 +27,16 @@ if (!function_exists('greeting')) {
     }
 }
 
+if (!function_exists('stringClean')) {
+    function stringClean($string){
+        $pattern = '/\([^)]*\)/'; // This regular expression matches anything inside parentheses
+
+        $cleanString = preg_replace($pattern, '', $string);
+
+        return $cleanString;
+    }
+}
+
 
 
 

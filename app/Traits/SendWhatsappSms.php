@@ -10,7 +10,7 @@ trait SendWhatsappSms
         foreach ($responses as $key) {
             $rows[] = [
                 'id' => $key->id,
-                'title' => $key->name_eng,
+                'title' => stringClean($key->name_eng),
             ];
         }
 
@@ -38,8 +38,9 @@ trait SendWhatsappSms
         ];
 
         $json_data = json_encode($data);
+        //return $json_data;
        // Log::debug($data);
-        $response =$this->sendSms($data);
+       $response =$this->sendSms($json_data);
 
        // return $response;
 
@@ -59,8 +60,11 @@ trait SendWhatsappSms
         ];
 
         $json_data = json_encode($data);
+
+       // return $json_data;
+
        // Log::debug($data);
-        $response =$this->sendSms($data);
+        $response =$this->sendSms($json_data);
 
        // return $response;
     }
@@ -141,7 +145,7 @@ trait SendWhatsappSms
 
         $json_data = json_encode($data);
        // Log::debug($data);
-        $response =$this->sendSms($data);
+        $response =$this->sendSms($json_data);
 
        // return $response;
 

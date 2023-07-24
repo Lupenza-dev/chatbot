@@ -28,7 +28,7 @@
                     <div class="card">
                         <div class="card-header" style="margin-bottom: 10px; display: flex; flex-direction:row; justify-content:space-between; align-items:center">
                             <div></div>
-                            <h4 class="card-title mb-0">Thread Link</h4>
+                            <h4 class="card-title mb-0">Response To Thread Link</h4>
                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#myModal"> <span class="bx bx-plus-circle"></span> Add Link</button>
                         </div><!-- end card header -->
 
@@ -40,7 +40,7 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th>Created At</th>
-                                            <th scope="col">Thread</th>
+                                            <th scope="col">Response</th>
                                             <th scope="col">Thread Linked To</th>
                                             <th scope="col">Actions</th>
                                         </tr>
@@ -50,8 +50,8 @@
                                         <tr style="margin-top: 20px; margin-bottom: 20px">
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $link->created_at}}</td>
-                                            <td>{{ $link->response->title_eng }}</td>
-                                            <td>{{ $link->link_response->title_eng }}</td>
+                                            <td>{{ $link->response->name_eng }}</td>
+                                            <td>{{ $link->thread->title_eng }}</td>
                                             <td>
                                                 <button type="button" id="{{ $link->uuid}}" onclick="deleteThread(id)" class="btn btn-outline-danger btn-sm btn-icon"><i class=" ri-delete-bin-5-line"></i></button>
                                             </td>
@@ -84,19 +84,19 @@
                 <form id="registration_form">
                     <div class="form-group row">
                         <div class="col-md-12">
-                            <label for="">Thread </label>
-                           <select name="thread_id" class="form-control">
-                            <option value="" selected> Select Thread</option>
-                            @foreach ($threads as $item)
-                                <option value="{{ $item->id }}">{{ $item->title_eng }}</option>
+                            <label for="">Response </label>
+                           <select name="thread_response_id" class="form-control">
+                            <option value="" selected> Select Thread Response</option>
+                            @foreach ($responses as $item)
+                                <option value="{{ $item->id }}">{{ $item->name_eng }}</option>
                             @endforeach
                            </select>
                         </div>
                     </div>
                     <div class="form-group row" style="margin-top: 10px">
                         <div class="col-md-12">
-                            <label for="">Thread Link with</label>
-                           <select name="linked_thread_id" class="form-control">
+                            <label for="">Thread To Link With Response</label>
+                           <select name="thread_id" class="form-control">
                             <option value="" selected> Select Thread To Linked</option>
                             @foreach ($threads as $item)
                                 <option value="{{ $item->id }}">{{ $item->title_eng }}</option>
@@ -104,6 +104,7 @@
                            </select>
                         </div>
                     </div>
+                   
                     <div class="form-group row" style="margin-top: 10px;">
                         <div class="col-md-12" id="alert">
                         </div>
@@ -137,7 +138,7 @@
     },
     function(){
       $.ajax({
-            url: "{{ route('delete.thread.link')}}", 
+            url: "{{ route('delete.response.link')}}", 
             method: "POST",
             data: {uuid:id,'_token':csrf_tokken,action:'activate'},
             success: function(response)
@@ -170,7 +171,7 @@
           });
       $.ajax({
       type:'POST',
-      url:"{{ route('links.store')}}",
+      url:"{{ route('response.links.store')}}",
       data : new FormData(this),
       contentType: false,
       cache: false,

@@ -1,180 +1,154 @@
 <?php
 namespace App\Traits;
-use App\Models\Message;
+use App\Models\Thread;
 use App\Traits\SendWhatsappSms;
-use App\Models\MessageResponse;
+use App\Traits\BotLogTrait;
 use App\Models\ThreadLink;
 use App\Models\BotLog;
 use Str;
+use App\Models\ResponseThreadLink;
+
 
 trait MessageStep
 {
-    use SendWhatsappSms;
+    use SendWhatsappSms,BotLogTrait;
 
-    public function firstThread($log){
-        $step =$log->step;
+    public function analyseThread($log){
+        $step              =$log->step;
+        $phone_number      =$log->phone_number;
+        $replied_text      =$log->text;
+        $replied_text_id   =$log->reply_id;
+        $type              =$log->type;
+        $thread_id         =$log->thread_id;
+        $thread_id         =$log->thread_id;
+        #### new analyser start ######
+        ## step 1 check type of text if type=text means thread to thread and if type=list means reponse to thread
 
-        if ($step == 0) {
-            $message =Message::with('responses')->where('step',0)->first();
-            $phone_number =$log->phone_number;
-            $header_text  =$message->title_eng;
-            $button_label ="Our Services";
-            $responses    =$message->responses;
-             ###clear open log
-             $logs =BotLog::where('phone_number',$phone_number)->get();
-             foreach ($logs as $key ) {
-                 $key->update(['status' =>'CLOSED']);
-             }
+        if ($type  == "text" || $type == "TEXT" || $type == "LIST MESSAGE") {
+            ### check thread if exist if not exist means its first screen not to be rendered
 
-            $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
-            return $response;
-        }
-    }
+            $exist_thread =ThreadLink::where('thread_id',$thread_id)->first();
+            
+            if ($exist_thread) {
 
-    public function analyseThread($log,$body,$message_id){
-        $step         =$log->step;
-        $phone_number =$log->phone_number;
-        $available_responses =MessageResponse::where('name_eng',$body)->first();
-        if ($available_responses) {
-            ## find next step
-            $next_step =Message::with('responses')->where('title_eng',$body)->first();
-            if ($next_step) {
-                ### message type
+                $thread =Thread::with('responses')->where('id',$exist_thread->linked_thread_id)->first();
 
-                if ($next_step->message_type == "LIST MESSAGE") {
-                    $phone_number =$log->phone_number;
-                    $header_text  =$next_step->label;
-                    $button_label ="Select one option";
-                    $responses    =$next_step->responses;
-                   
+                    if ($thread){
 
-                    ###clear open log
-                    $logs =BotLog::where('phone_number',$phone_number)->get();
-                    foreach ($logs as $key ) {
-                        $key->update(['status' =>'CLOSED']);
+                        if ($thread->thread_type == "LIST MESSAGE") {
+                            $header_text  =$thread->label;
+                            $button_label ="Select one option";
+                            $responses    =$thread->responses;
+                        
+        
+                           ###clear open log
+                           $this->clearLogs($phone_number);
+
+                            ### creatte new log
+                            $log =BotLog::create([
+                                'phone_number' =>$phone_number,
+                                // 'message_id'   =>$message_id,
+                                'text'         =>$thread->label,
+                                'step'         =>$thread->step,
+                                'thread_id'    =>$thread->id,
+                                'type'         =>$thread->thread_type,
+                                'uuid'         =>(string)Str::orderedUuid(),
+                            ]);
+        
+                            $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                            return $response; 
+                        } else {
+                             ###clear open log
+                        $this->clearLogs($phone_number);
+
+                        ### creatte new log
+                        $log =BotLog::create([
+                            'phone_number' =>$phone_number,
+                            // 'message_id'   =>$message_id,
+                            'text'         =>$thread->label,
+                            'step'         =>$thread->step,
+                            'thread_id'    =>$thread->id,
+                            'type'         =>$thread->thread_type,
+                            'uuid'         =>(string)Str::orderedUuid(),
+                        ]);
+
+                        $response =$this->textSms($phone_number,$thread->label);
+                        return $response; 
+                        }
+                        
+                    } else {
+                        ### not exist means end
+                         ###clear open log
+                         $this->clearLogs($phone_number);
+
+                         $response =$this->textSms($phone_number,"Thanks For Contact us We will revert back to you soon"); 
+                         $response_2 =$this->companyAddress($phone_number);
+                         return $response_2;
                     }
+                    
 
-                    ### creatte new log
-                    $log =BotLog::create([
+                 
+            } else {
+                $thread =Thread::with('responses')->where('id',$thread_id)->first();
+                $header_text  =$thread->label;
+                $button_label ="Our Services";
+                $responses    =$thread->responses;
+                 ###clear open log
+                 $this->clearLogs($phone_number);
+    
+                $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                return $response;
+            }
+            
+
+        }elseif ($type == "interactive") {
+             
+            $response_thread =ResponseThreadLink::where('thread_response_id',$replied_text_id)->first();
+            //return $response_thread;
+            if ($response_thread) {
+                $thread =Thread::with('responses')->where('id',$response_thread->thread_id)->first();
+
+                if ($thread->thread_type == "LIST MESSAGE") {
+                    $header_text  =$thread->label;
+                    $button_label ="Select one option";
+                    $responses    =$thread->responses;
+                
+
+                   ###clear open log
+                   $this->clearLogs($phone_number);
+
+                    $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                    return $response; 
+
+                } else {
+                      ###clear open log
+                    $this->clearLogs($phone_number);
+
+                     ### creatte new log
+                     $log =BotLog::create([
                         'phone_number' =>$phone_number,
-                        'message_id'   =>$message_id,
-                        'text'         =>$body,
-                        'step'         =>$next_step->step,
-                        'thread_id'    =>$next_step->id,
-                        'type'         =>$next_step->message_type,
+                       // 'message_id'   =>$message_id,
+                        'text'         =>$thread->label,
+                        'step'         =>$thread->step,
+                        'thread_id'    =>$thread->id,
+                        'type'         =>$thread->thread_type,
                         'uuid'         =>(string)Str::orderedUuid(),
                     ]);
 
-                    $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                    $response =$this->textSms($phone_number,$thread->label);
                     return $response;
-
-                } else {
-                    ## get last step to know next
-                    a:$last_step_id =$log->thread_id;
-                     
-                    ## next step get from thread link
-
-                    $next_step =ThreadLink::where('message_id',$last_step_id)->first();
-                    if ($next_step) {
-                          ### next step
-                          $next_message =Message::where('id',$next_step->linked_message_id)->first();
-
-                           ###clear open log
-                            $logs =BotLog::where('phone_number',$phone_number)->get();
-                            foreach ($logs as $key ) {
-                                $key->update(['status' =>'CLOSED']);
-                            }
-
-                            
-
-                            ### creatte new log
-                            $log =BotLog::create([
-                                'phone_number' =>$phone_number,
-                                'message_id'   =>$message_id,
-                                'text'         =>$body,
-                                'step'         =>$next_message->step,
-                                'thread_id'    =>$next_message->id,
-                                'type'         =>$next_message->message_type,
-                                'uuid'         =>(string)Str::orderedUuid(),
-                            ]);
-
-
-                        $response =$this->textSms($log->phone_number, $next_message->title_eng);
-                        return $response;
-                    } else {
-                        ### get last step by fetching body from thread/message 
-                        $last_step =Message::where('title_eng',$body)->first();
-                        
-                        ###if last_step not exit means you at end
-
-                        if (!$last_step) {
-                              ###clear open log
-                              $logs =BotLog::where('phone_number',$phone_number)->get();
-                              foreach ($logs as $key ) {
-                                  $key->update(['status' =>'CLOSED']);
-                              }
-  
-                          $response =$this->textSms($log->phone_number,"Thanks For Contact us We will revert back to you soon"); 
-                          $response_2 =$this->companyAddress($log->phone_number);
-                          return $response;
-                        }
-
-                        ## return to thread link to get current step
-
-                        $current_step =ThreadLink::where('message_id',$last_step->id)->first();
-
-                        ### next step
-                        $next_message =Message::where('id',$current_step->linked_message_id)->first();
-
-                         ###clear open log
-                            $logs =BotLog::where('phone_number',$phone_number)->get();
-                            foreach ($logs as $key ) {
-                                $key->update(['status' =>'CLOSED']);
-                            }
-
-                            ### creatte new log
-                            $log =BotLog::create([
-                                'phone_number' =>$phone_number,
-                                'message_id'   =>$message_id,
-                                'text'         =>$body,
-                                'step'         =>$next_message->step,
-                                'thread_id'    =>$next_message->id,
-                                'type'         =>$next_message->message_type,
-                                'uuid'         =>(string)Str::orderedUuid(),
-                            ]);
-
-                        $response =$this->textSms($log->phone_number, $next_message->title_eng);
-
-                        return $response;
-                    }
-                    
                 }
                 
+               
             } else {
-                #### Lupenza you have to think if message not available
+                # code...
             }
             
-        }elseif ($step == 0 && !$available_responses) {
-            $message =Message::with('responses')->where('step',0)->first();
-            $phone_number =$log->phone_number;
-            $header_text  =$message->title_eng;
-            $button_label ="Our Services";
-            $responses    =$message->responses;
-             ###clear open log
-             $logs =BotLog::where('phone_number',$phone_number)->get();
-             foreach ($logs as $key ) {
-                 $key->update(['status' =>'CLOSED']);
-             }
-
-            $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
-            return $response;
         }
-        else {
-
-            goto a;
-            #### Lupenza you have to think if response not available Done
+         else {
+            ### if other type increase we have to add here
         }
-       
         
+       
     }
 }   

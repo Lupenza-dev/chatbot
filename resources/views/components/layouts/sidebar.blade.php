@@ -43,6 +43,9 @@
                 <li class="nav-item">
                     <a href="{{ route('links.index')}}" class="nav-link menu-link"> <i class="ph-link-thin"></i> <span data-key="t-chat">Link Threads</span> </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('response.links')}}" class="nav-link menu-link"> <i class="ph-link-thin"></i> <span data-key="t-chat">Link Response</span> </a>
+                </li>
 
                 {{-- <li class="nav-item">
                     <a href="apps-email.html" class="nav-link menu-link"> <i class="ph-envelope"></i> <span data-key="t-email">Email</span> </a>

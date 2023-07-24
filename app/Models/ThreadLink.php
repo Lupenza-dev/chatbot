@@ -9,13 +9,13 @@ class ThreadLink extends Model
 {
     use HasFactory;
 
-    protected $fillable=['message_id','linked_message_id','message_type','uuid','created_by'];
+    protected $fillable=['thread_id','linked_thread_id','uuid','created_by'];
 
     public function response(){
-        return $this->hasOne(Message::class,'id','message_id');
+        return $this->hasOne(Thread::class,'id','thread_id');
     }
 
     public function link_response(){
-        return $this->hasOne(Message::class,'id','linked_message_id');
+        return $this->hasOne(Thread::class,'id','linked_thread_id');
     }
 }

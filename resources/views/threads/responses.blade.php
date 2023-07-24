@@ -32,13 +32,13 @@
                         <!-- end card header -->
                         <div class="card-body">
                             <form id="registration_form">
-                                <input name="message_id" value="{{ $message->id}}" type="hidden">
+                                <input name="thread_id" value="{{ $thread->id}}" type="hidden">
                                 <input type="hidden" name="response_uuid" id="response_uuid">
                             <div class="row gy-4">
                                 <div class="col-xxl-12 col-md-12">
                                     <div>
                                         <label for="basiInput" class="form-label">Thread</label>
-                                        <textarea class="form-control" readonly>{{ $message->title_eng}}</textarea>
+                                        <textarea class="form-control" readonly>{{ $thread->title_eng}}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-xxl-12 col-md-12">
@@ -107,7 +107,7 @@
                                             <td><span class="bx bx-link-alt"></span></td>
                                             <td>{{ $response->order_no }}</td>
                                             <td>{{ $response->name_eng }}</td>
-                                            <td>{{ $message->created_at}}</td>
+                                            <td>{{ $response->created_at}}</td>
                                             <td>
                                                 <button type="button" class="btn btn-outline-success btn-sm btn-icon response-edit"
                                                  data-uuid="{{ $response->uuid}}"

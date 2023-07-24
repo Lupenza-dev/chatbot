@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Message;
+use App\Models\Thread;
 use App\Models\ThreadLink;
-use App\Models\MessageType;
+use App\Models\ThreadType;
+use App\Models\ThreadResponse;
+use App\Models\ResponseThreadLink;
 use Str;
 use Auth;
 
@@ -17,10 +19,16 @@ class ThreadLinkController extends Controller
      */
     public function index()
     {
-        $messages      =Message::where('message_type','TEXT')->get();
-        $message_types =MessageType::get();
+        $threads        =Thread::latest()->get();
         $links         =ThreadLink::with('response','link_response')->latest()->get();
-        return view('threads.thread_link',compact('messages','message_types','links'));
+        return view('threads.thread_link',compact('threads','links'));
+    }
+
+    public function responseLink(){
+        $links =ResponseThreadLink::with('response','thread')->get();
+        $responses =ThreadResponse::with('response_link')->whereDoesnthave('response_link')->get();
+        $threads   =Thread::get();
+        return view('threads.response_links',compact('links','responses','threads'));
     }
 
     /**
@@ -37,12 +45,30 @@ class ThreadLinkController extends Controller
     public function store(Request $request)
     {
         $valid_data =$this->validate($request,[
-            'message_id'            =>'required',
-            'linked_message_id'     =>'required',
-            'message_type'          =>'required',
+            'thread_id'            =>'required',
+            'linked_thread_id'     =>'required',
         ]);
 
         $message =ThreadLink::create($valid_data +[
+            'uuid' =>(string)Str::orderedUuid(),
+            'created_by' =>Auth::user()->id,
+        ]);
+
+        return response()->json([
+            'success' =>true,
+            'message' =>'Action done successfully'
+        ],200);
+    }
+
+
+    public function responseLinkStore(Request $request)
+    {
+        $valid_data =$this->validate($request,[
+            'thread_response_id'   =>'required',
+            'thread_id'     =>'required',
+        ]);
+
+        $message =ResponseThreadLink::create($valid_data +[
             'uuid' =>(string)Str::orderedUuid(),
             'created_by' =>Auth::user()->id,
         ]);
@@ -84,6 +110,19 @@ class ThreadLinkController extends Controller
     {
         $uuid =$request->uuid;
         $thread =ThreadLink::where('uuid',$uuid)->first();
+       // $thread->responses()->delete();
+        $thread->delete();
+
+        return response()->json([
+            'success' =>true,
+            'message' =>'Action done successfully'
+        ],200);
+    }
+
+    public function destroyResponseLink(Request $request)
+    {
+        $uuid =$request->uuid;
+        $thread =ResponseThreadLink::where('uuid',$uuid)->first();
        // $thread->responses()->delete();
         $thread->delete();
 

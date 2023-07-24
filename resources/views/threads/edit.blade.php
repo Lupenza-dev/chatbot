@@ -32,49 +32,61 @@
                         <!-- end card header -->
                         <div class="card-body">
                             <form id="registration_form">
-                                <input type="hidden" name="message_uuid" value="{{ $message->uuid}}">
+                                <input type="hidden" name="thread_uuid" value="{{ $thread->uuid}}">
                             <div class="row gy-4">
                                 <div class="col-xxl-12 col-md-12">
                                     <div>
                                         <label for="basiInput" class="form-label">Title Eng</label>
-                                        <textarea name="title_eng" class="form-control"  required>{{ $message->title_eng}}</textarea>
+                                        <textarea name="title_eng" class="form-control"  required>{{ $thread->title_eng}}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-xxl-12 col-md-12">
                                     <div>
                                         <label for="basiInput" class="form-label">Title Sw</label>
-                                        <textarea name="title_sw" class="form-control" required>{{ $message->title_sw}}</textarea>
+                                        <textarea name="title_sw" class="form-control" required>{{ $thread->title_sw}}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-12 col-md-12">
+                                    <div>
+                                        <label for="basiInput" class="form-label">Label Eng</label>
+                                        <textarea name="label" class="form-control" required>{{ $thread->label}}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-12 col-md-12">
+                                    <div>
+                                        <label for="basiInput" class="form-label">Label Sw</label>
+                                        <textarea name="label_sw" class="form-control" required>{{ $thread->label_sw}}</textarea>
                                     </div>
                                 </div>
                                 <!--end col-->
-                                <div class="col-xxl-3 col-md-6">
+                                <div class="col-xxl-4 col-md-6">
                                     <div>
                                         <label for="labelInput" class="form-label">Step</label>
-                                        <input type="text" name="step" value="{{ $message->step}}" class="form-control" id="labelInput" required>
+                                        <input type="text" name="step" value="{{ $thread->step}}" class="form-control" id="labelInput" required>
                                     </div>
                                 </div>
                                 <!--end col-->
-                                <div class="col-xxl-3 col-md-6">
+                                <div class="col-xxl-4 col-md-6">
                                     <div>
                                         <label for="placeholderInput" class="form-label">Flag</label>
-                                        <input type="text" name="flag" class="form-control" id="placeholderInput" value="{{ $message->flag}}" required>
+                                        <input type="text" name="flag" class="form-control" id="placeholderInput" value="{{ $thread->flag}}" required>
                                     </div>
                                 </div>
                                 <!--end col-->
-                                <div class="col-xxl-3 col-md-6">
+                                {{-- <div class="col-xxl-3 col-md-6">
                                     <div>
                                         <label for="valueInput" class="form-label">Label</label>
-                                        <input type="text" name="label" class="form-control" id="valueInput" value="{{ $message->label }}" required>
+                                        <input type="text" name="label" class="form-control" id="valueInput" value="{{ $thread->label }}" required>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <!--end col-->
-                                <div class="col-xxl-3 col-md-6">
+                                <div class="col-xxl-4 col-md-6">
                                     <div>
                                         <label for="readonlyPlaintext" class="form-label">Message Type</label>
-                                       <select name="message_type" class="form-control" required>
+                                       <select name="thread_type" class="form-control" required>
                                         <option value="" selected>Please choose message type</option>
-                                        @foreach ($message_types as $item)
-                                        <option value="{{ $item->name}}" {{ $item->name == $message->message_type ? "selected":""}}>{{ $item->name }}</option>
+                                        @foreach ($thread_types as $item)
+                                        <option value="{{ $item->name}}" {{ $item->name == $thread->thread_type ? "selected":""}}>{{ $item->name }}</option>
                                             
                                         @endforeach
                                        </select>
@@ -84,7 +96,7 @@
                                 <div class="col-xxl-3 col-md-6">
                                     <div>
                                        
-                                        <input type="checkbox" name="back_status" value="Yes" {{ $message->back_status == "Yes" ? "checked":""}}>
+                                        <input type="checkbox" name="back_status" value="Yes" {{ $thread->back_status == "Yes" ? "checked":""}}>
                                         <label for="">Back To Main Menu</label>
                                     </div>
                                 </div>

@@ -47,8 +47,14 @@
                                 </div>
                                 <div class="col-xxl-12 col-md-12">
                                     <div>
-                                        <label for="valueInput" class="form-label">Label</label>
+                                        <label for="valueInput" class="form-label">Label Eng</label>
                                         <textarea name="label" class="form-control" required placeholder="Write label.."></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-12 col-md-12">
+                                    <div>
+                                        <label for="valueInput" class="form-label">Label Sw</label>
+                                        <textarea name="label_sw" class="form-control" required placeholder="Write label.."></textarea>
                                     </div>
                                 </div>
                                 <!--end col-->
@@ -70,12 +76,11 @@
                                 <!--end col-->
                                 <div class="col-xxl-4 col-md-6">
                                     <div>
-                                        <label for="readonlyPlaintext" class="form-label">Message Type</label>
-                                       <select name="message_type" class="form-control" required>
-                                        <option value="" selected>Please choose message type</option>
-                                        @foreach ($message_types as $message)
-                                        <option value="{{ $message->name}}">{{ $message->name }}</option>
-                                            
+                                        <label for="readonlyPlaintext" class="form-label">Thread Type</label>
+                                       <select name="thread_type" class="form-control" required>
+                                        <option value="" selected>Please choose thread type</option>
+                                        @foreach ($thread_types as $item)
+                                        <option value="{{ $item->name}}">{{ $item->name }}</option>
                                         @endforeach
                                        </select>
                                     </div>
