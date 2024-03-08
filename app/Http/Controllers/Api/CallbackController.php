@@ -16,14 +16,28 @@ class CallbackController extends Controller
     use MessageStep , SendWhatsappSms ,BotLogTrait;
 
     public function whatsappCallback(Request $request){
-        //return $request->all();
-        // if($_SERVER['REQUEST_METHOD']=="GET"){
-        //     echo $_GET['hub_challenge']; //respond back hub_callenge key
-        //     http_response_code(200);
-        // }else{
-        //     $data = json_decode(file_get_contents('php://input'), true);
-        //     error_log(json_encode($data)); //print inbound message     
-        // }
+        Log::debug(request()->all());
+    //    // return $request->all();
+    //     if($_SERVER['REQUEST_METHOD']=="GET"){
+    //         $challenge =$_GET['hub_challenge'];
+    //         $hub_verify_token =$_GET['hub_verify_token'];
+    //         if ($hub_verify_token == "Chatbot@2023") {
+    //             Log::info('step sahihi');
+    //             return $challenge;
+    //             return http_response_code($challenge);
+    //         }
+    //         Log::info($_GET['hub_challenge']);
+    //         //echo $_GET['hub_challenge']; //respond back hub_callenge key
+    //         http_response_code(200);
+    //     }else{
+    //         $data = json_decode(file_get_contents('php://input'), true);
+    //         error_log(json_encode($data)); //print inbound message     
+    //     }
+
+    //     Log::info('step sahihi');
+
+
+       // return  http_response_code(200);;
             
         $response = json_decode(file_get_contents('php://input'), true);
         Log::debug($response);

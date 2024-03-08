@@ -15,32 +15,31 @@ trait SendWhatsappSms
         }
 
         $data = [
-            'messaging_product' => 'whatsapp',
-            'recipient_type' => 'individual',
-            'to' => $phone_number,
-            'type' => 'interactive',
-            'interactive' => [
-                'type' => 'list',
-                'body' => [
-                    'text' => $header_text,
+            "messaging_product" =>"whatsapp",
+            "recipient_type" => "individual", 
+            "to" => $phone_number,
+            "type" => "interactive",
+            "interactive" => [
+                "type" => "list",
+                "body" => [
+                    "text" => $header_text,
                 ],
-                'action' => [
-                    'button' => $button_label,
-                    'sections' => [
+                "action" => [
+                    "button" => $button_label,
+                    "sections" => [
                         [
-                            'title' => $button_label,
-                            'rows' => $rows,
+                            "title" => $button_label,
+                            "rows" => $rows,
                         ],
-                        // Add additional sections if needed
                     ],
                 ],
             ],
         ];
 
-        $json_data = json_encode($data);
+        //$json_data = json_encode($data);
         //return $json_data;
        // Log::debug($data);
-       $response =$this->sendSms($json_data);
+       $response =$this->sendSms($data);
 
        // return $response;
 
@@ -49,32 +48,40 @@ trait SendWhatsappSms
 
     public function textSms($phone_number, $message) {
         $data = [
-            "messaging_product" => "whatsapp",
-            "recipient_type"    => "individual",
-            "to"      => $phone_number,
-            "type"    => "text",
-            "text"    => [
-                "preview_url" =>false,
-                "body"        =>$message
+            'messaging_product' => 'whatsapp',
+            'recipient_type'    => 'individual',
+            'to'      => $phone_number,
+            'type'    => 'text',
+            'text'    => [
+                'preview_url' =>false,
+                'body'        =>$message
             ]
         ];
 
-        $json_data = json_encode($data);
+        Log::debug($data);
+
+      //  $json_data = json_encode($data);
 
        // return $json_data;
 
        // Log::debug($data);
-        $response =$this->sendSms($json_data);
+        $response =$this->sendSms($data);
 
        // return $response;
     }
 
     public function sendSms($data){
+        Log::debug('----------------------- send api request-------------------');
+
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer EABTteIj9T7sBAJg6E9ZAYQpCSx1hglBi6MDZCosZBiDTlEHRnx5EKrUrJJkDYb6chUWylZCT80GI3OxCydiD9rylWrZBpDKoiHjkNr5VlEBgB4yO43qR6XUzERfEZCst4ZCZBw9w0vTgX9Gv0t7KT8srbFztoS6rwZCInDfRVI1MyXYRPTYLEhHcN0WrT1QMKz4rpt2dTXTvYXAZDZD',
+            'Authorization' => 'Bearer EABTteIj9T7sBO6T05uIxwkUfXCxi7wDnux1Xu07kRCqeumqGi7IRVWcjFfnJyxd6JB0omxWEzGchhvoTZBzqspfDMpagiTXSkzzpGdhvVPhlYLqgZB6WLH5IZBJHrMwOuZAedL8hTVVbiObKmgNLhpR7OmnjHFaahQCP2VTsrWq24VJTTdbzyWyxw4Jr0DnEoCiiznsEbUnsacYncygZD',
         ])
+       // ->post('https://graph.facebook.com/v17.0/115034001648802/messages',$data);
         ->post('https://graph.facebook.com/v17.0/115034001648802/messages',$data);
+        Log::debug('-----------------------response-------------------');
+        Log::debug($response);
+
         
         // Retrieve the response
         $responseData = $response->json();
@@ -143,9 +150,9 @@ trait SendWhatsappSms
             ],
         ];
 
-        $json_data = json_encode($data);
-       // Log::debug($data);
-        $response =$this->sendSms($json_data);
+       // $json_data = json_encode($data);
+        Log::debug($data);
+        $response =$this->sendSms($data);
 
        // return $response;
 

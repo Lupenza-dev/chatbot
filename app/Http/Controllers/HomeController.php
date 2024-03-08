@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Traits\SendWhatsappSms;
 
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    use SendWhatsappSms;
     /**
      * Create a new controller instance.
      *
