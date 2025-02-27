@@ -17,7 +17,7 @@ class CallbackController extends Controller
 
     public function whatsappCallback(Request $request){
         Log::debug(request()->all());
-    //    // return $request->all();
+       //return $request->all();
     //     if($_SERVER['REQUEST_METHOD']=="GET"){
     //         $challenge =$_GET['hub_challenge'];
     //         $hub_verify_token =$_GET['hub_verify_token'];
@@ -37,7 +37,7 @@ class CallbackController extends Controller
     //     Log::info('step sahihi');
 
 
-       // return  http_response_code(200);;
+    //    return  http_response_code(200);
             
         $response = json_decode(file_get_contents('php://input'), true);
         Log::debug($response);
@@ -49,7 +49,7 @@ class CallbackController extends Controller
         if(array_key_exists("messages", $response['entry'][0]['changes'][0]['value'])){
    
         $type         =$response['entry'][0]['changes'][0]['value']['messages'][0]['type'];
-
+        $reply_id  =null;
         if ($type == "text") {
            // return 67;
             $phone_number =$response['entry'][0]['changes'][0]['value']['messages'][0]['from'];
@@ -94,10 +94,11 @@ class CallbackController extends Controller
                 'thread_id'    =>1,
                 'type'         =>$type,
                 'uuid'         =>(string)Str::orderedUuid(),
+                // 'status'       =>"OPEN"
             ]);
         }
 
-        $response =$this->analyseThread($logs);
+        $response =$this->analyseThread($logs,$reply_id );
         return $response;
     }
 

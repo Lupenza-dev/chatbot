@@ -75,10 +75,10 @@ trait SendWhatsappSms
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer EABTteIj9T7sBO6T05uIxwkUfXCxi7wDnux1Xu07kRCqeumqGi7IRVWcjFfnJyxd6JB0omxWEzGchhvoTZBzqspfDMpagiTXSkzzpGdhvVPhlYLqgZB6WLH5IZBJHrMwOuZAedL8hTVVbiObKmgNLhpR7OmnjHFaahQCP2VTsrWq24VJTTdbzyWyxw4Jr0DnEoCiiznsEbUnsacYncygZD',
+            'Authorization' => 'Bearer EAAR75ZBS0trABO07xf3csav53qPMW1lZA97qxSNKnJqrR7ebWQqeAi4Ncgeu88Cq7MQZADJTCOf9vZCrlxuOVabCdcbsEZBHIvP1D9BxlwqUaRARzcVz5YdB77UieotDiXYe9cSbfiXZAIpyPfVNZB1BCNpzZAUzkKkvZC7TvikjCHb6UQ3jq0ZB4rM3MTu86yZBRtxsvxx1ZBXBtjbNYYzeWh0qNUZBojEFjQgZDZD',
         ])
        // ->post('https://graph.facebook.com/v17.0/115034001648802/messages',$data);
-        ->post('https://graph.facebook.com/v17.0/115034001648802/messages',$data);
+        ->post('https://graph.facebook.com/v22.0/115034001648802/messages',$data);
         Log::debug('-----------------------response-------------------');
         Log::debug($response);
 

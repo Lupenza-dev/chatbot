@@ -7,10 +7,10 @@
 <head>
 
         <meta charset="utf-8">
-        <title>GsAfrica</title>
+        <title>WCF</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="Air Ticketing" name="description">
-        <meta content="Travel Insurance" name="author">
+        <meta content="FIDIA STAHIKI" name="description">
+        <meta content="Workers Compensation Fund" name="author">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
         <!-- App favicon -->

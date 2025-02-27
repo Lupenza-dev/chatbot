@@ -8,7 +8,7 @@
             <span class="logo-lg">
                 <img src="assets/images/logo-dark.png" alt="" height="22">
             </span> -->
-            <span style="font-size: 20px; color: #fff; font-weight: bold">GsAfrica</span>
+            <span style="font-size: 20px; color: #fff; font-weight: bold">WCF</span>
         </a>
         <a href="index.html" class="logo logo-light">
             <!-- <span class="logo-sm">
@@ -17,7 +17,7 @@
             <span class="logo-lg">
                 <img src="assets/images/logo-light.png" alt="" height="22">
             </span> -->
-            <span style="font-size: 20px; color: #fff; font-weight: bold">GsAfrica</span>
+            <span style="font-size: 20px; color: #fff; font-weight: bold">WCF</span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-3xl header-item float-end btn-vertical-sm-hover" id="vertical-hover">
             <i class="ri-record-circle-line"></i>
@@ -51,10 +51,10 @@
                     <a href="apps-email.html" class="nav-link menu-link"> <i class="ph-envelope"></i> <span data-key="t-email">Email</span> </a>
                 </li> --}}
 
-                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Customers</span></li>
+                <!-- <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Customers</span></li>
                 <li class="nav-item">
                     <a href="#" class="nav-link menu-link"> <i class="ph-users"></i> <span data-key="t-chat">Customers</span> </a>
-                </li>
+                </li> -->
             </ul>
         </div>
         <!-- Sidebar -->

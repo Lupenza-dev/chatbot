@@ -19,7 +19,7 @@
                                         <div class="effect-circle-1 position-relative mx-auto rounded-circle d-flex align-items-center justify-content-center">
                                             <div class="effect-circle-2 position-relative mx-auto rounded-circle d-flex align-items-center justify-content-center">
                                                 <div class="effect-circle-3 mx-auto rounded-circle position-relative text-white fs-4xl d-flex align-items-center justify-content-center">
-                                                    Welcome to <span class="text-primary ms-1">GsAfrica</span>
+                                                    Welcome to <span class="text-primary ms-1">WCF</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -64,7 +64,7 @@
                     
                                     <div class="text-center">
                                         <p class="text-white opacity-75 mb-0 mt-3">
-                                            &copy; <script>document.write(new Date().getFullYear())</script> Designed and developed by GsAfrica
+                                            &copy; <script>document.write(new Date().getFullYear())</script> Designed and developed by WCF
                                         </p>
                                     </div>
                                 </div>
@@ -76,7 +76,7 @@
                                 <div class="card-body p-sm-5 m-lg-4">
                                     <div class="text-center mt-5">
                                         <h5 class="fs-3xl">Welcome Back</h5>
-                                        <p class="text-muted">Sign in to continue to GsAfrica.</p>
+                                        <p class="text-muted">Sign in to continue to ChatBot.</p>
                                     </div>
                                     <div class="p-2 mt-5">
                                         <form id="user_auth">
