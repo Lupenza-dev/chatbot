@@ -41,7 +41,8 @@ class ThreadController extends Controller
             'flag'         =>'required',
             'label'        =>'required',
             'label_sw'     =>'required',
-            'thread_type'  =>'required'
+            'thread_type'   =>'required',
+            'close_thread'  =>'required',
         ]);
 
         $message =Thread::create($valid_data +[
@@ -88,6 +89,7 @@ class ThreadController extends Controller
             'label_sw'     =>'required',
             'thread_type' =>'required',
             'thread_uuid' =>'required',
+            'close_thread'  =>'required',
         ]);
 
         $message =Thread::where('uuid',$valid_data['thread_uuid'])->first();
@@ -97,8 +99,9 @@ class ThreadController extends Controller
         $message->flag          =$valid_data['flag'];
         $message->label         =$valid_data['label'];
         $message->label_sw      =$valid_data['label_sw'];
-        $message->thread_type   =$valid_data['thread_type'];
-        $message->back_status   =$request->back_status ?? "No";
+        $message->thread_type    =$valid_data['thread_type'];
+        $message->close_thread   =$valid_data['close_thread'];
+        $message->back_status    =$request->back_status ?? "No";
         $message->save();
 
         return response()->json([

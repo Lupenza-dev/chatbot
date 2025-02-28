@@ -7,6 +7,7 @@ use App\Models\ThreadLink;
 use App\Models\BotLog;
 use Str;
 use App\Models\ResponseThreadLink;
+use App\Models\UserLanguage;
 use Log;
 
 
@@ -15,10 +16,10 @@ trait MessageStep
     use SendWhatsappSms,BotLogTrait;
 
     public function __construct(){
-        
+
     }
 
-    public function analyseThread($log,$reply_id){
+    public function analyseThread($log,$reply_id,$title_body){
         $step              =$log->step;
         $phone_number      =$log->phone_number;
         $replied_text      =$log->text;
@@ -42,8 +43,8 @@ trait MessageStep
                     if ($thread){
 
                         if ($thread->thread_type == "LIST MESSAGE") {
-                            $header_text  =$thread->label;
-                            $button_label ="Please Select One";
+                            $header_text   =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
+                            $button_label  =$this->getLanguage($phone_number) == 1 ? "Tafadhali Chagua": "Please Select One";
                             $responses    =$thread->responses;
                         
         
@@ -51,6 +52,28 @@ trait MessageStep
                            $this->clearLogs($phone_number);
 
                             ### creatte new log
+
+                            if (!$thread->close_thread) {
+                                $log =BotLog::create([
+                                    'phone_number' =>$phone_number,
+                                    // 'message_id'   =>$message_id,
+                                    'text'         =>$thread->label,
+                                    'step'         =>$thread->step,
+                                    'thread_id'    =>$thread->id,
+                                    'type'         =>$thread->thread_type,
+                                    'uuid'         =>(string)Str::orderedUuid(),
+                                ]);
+                            }
+                            
+        
+                            $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                            return $response; 
+                        } else {
+                             ###clear open log
+                        $this->clearLogs($phone_number);
+
+                        ### creatte new log
+                        if (!$thread->close_thread) {
                             $log =BotLog::create([
                                 'phone_number' =>$phone_number,
                                 // 'message_id'   =>$message_id,
@@ -60,25 +83,9 @@ trait MessageStep
                                 'type'         =>$thread->thread_type,
                                 'uuid'         =>(string)Str::orderedUuid(),
                             ]);
-        
-                            $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
-                            return $response; 
-                        } else {
-                             ###clear open log
-                        $this->clearLogs($phone_number);
+                        }
 
-                        ### creatte new log
-                        $log =BotLog::create([
-                            'phone_number' =>$phone_number,
-                            // 'message_id'   =>$message_id,
-                            'text'         =>$thread->label,
-                            'step'         =>$thread->step,
-                            'thread_id'    =>$thread->id,
-                            'type'         =>$thread->thread_type,
-                            'uuid'         =>(string)Str::orderedUuid(),
-                        ]);
-
-                        $response =$this->textSms($phone_number,$thread->label);
+                        $response =$this->textSms($phone_number,$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng);
                         return $response; 
                         }
                         
@@ -88,13 +95,14 @@ trait MessageStep
                          $this->clearLogs($phone_number);
 
                          $response =$this->textSms($phone_number,"Thanks For Contact us We will revert back to you soon"); 
-                         $response_2 =$this->companyAddress($phone_number);
-                         return $response_2;
+                         //$response_2 =$this->companyAddress($phone_number);
+                         return $response;
                     }
                     
 
                  
-            }else if($reply_id) {
+            }
+            else if($reply_id) {
                 ## Reply ID Ipo On LIST MESSAGE  
                // goto a;
                $response_thread =ResponseThreadLink::where('thread_response_id',$reply_id)->first();
@@ -116,24 +124,13 @@ trait MessageStep
                        return $response; 
    
                    }
-                //     else {
-                //          ###clear open log
-                //        $this->clearLogs($phone_number);
+                    else {
+                         ###clear open log
+                       $this->clearLogs($phone_number);
    
-                //         ### creatte new log
-                //         $log =BotLog::create([
-                //            'phone_number' =>$phone_number,
-                //           // 'message_id'   =>$message_id,
-                //            'text'         =>$thread->label,
-                //            'step'         =>$thread->step,
-                //            'thread_id'    =>$thread->id,
-                //            'type'         =>$thread->thread_type,
-                //            'uuid'         =>(string)Str::orderedUuid(),
-                //        ]);
-   
-                //        $response =$this->textSms($phone_number,$thread->label);
-                //        return $response;
-                //    }
+                       $response =$this->textSms($phone_number,$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng);
+                       return $response;
+                   }
                    
                   
                } else {
@@ -145,9 +142,9 @@ trait MessageStep
                 Log::debug("======new conv======== $log->step");
                 if ($log->step == 1) {
                     Log::debug("======new Ndani conv======== $log->step");
-                    $thread =Thread::with('responses')->where('step',1)->first();
-                    $header_text  =$thread->label;
-                    $button_label ="Choose Service";
+                    $thread        =Thread::with('responses')->where('step',1)->first();
+                    $header_text   =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
+                    $button_label  =$this->getLanguage($phone_number) == 1 ? "Chagua Huduma": "Choose Service";
                     $responses    =$thread->responses;
                      ###clear open log
                      $this->clearLogs($phone_number);
@@ -160,7 +157,25 @@ trait MessageStep
             
 
         }elseif ($type == "interactive") {
-             
+
+            ##### block deal with language
+            if (($reply_id) and (in_array($title_body,['Kiswahili','English']))) {
+                # Means Kachange Lugha
+                $this->changeLanguage($phone_number,$title_body);
+                $thread        =Thread::with('responses')->where('step',1)->first();
+                $header_text   =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
+                $button_label  =$this->getLanguage($phone_number) == 1 ? "Chagua Huduma": "Choose Service";
+                $responses    =$thread->responses;
+                 ###clear open log
+                 $this->clearLogs($phone_number);
+    
+                $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                return $response;
+
+
+            }
+            ##### block deal with language
+
             $response_thread =ResponseThreadLink::where('thread_response_id',$replied_text_id)->first();
             //return $response_thread;
             if ($response_thread) {
@@ -168,7 +183,8 @@ trait MessageStep
 
                 if ($thread->thread_type == "LIST MESSAGE") {
                     $header_text  =$thread->label;
-                    $button_label ="Please Select One";
+                    $header_text  =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
+                    $button_label  =$this->getLanguage($phone_number) == 1 ? "Tafadhali Chagua": "Please Select One";
                     $responses    =$thread->responses;
                 
 
@@ -183,17 +199,20 @@ trait MessageStep
                     $this->clearLogs($phone_number);
 
                      ### creatte new log
-                     $log =BotLog::create([
-                        'phone_number' =>$phone_number,
-                       // 'message_id'   =>$message_id,
-                        'text'         =>$thread->label,
-                        'step'         =>$thread->step,
-                        'thread_id'    =>$thread->id,
-                        'type'         =>$thread->thread_type,
-                        'uuid'         =>(string)Str::orderedUuid(),
-                    ]);
 
-                    $response =$this->textSms($phone_number,$thread->label);
+                     if (!$thread->close_thread) {
+                        $log =BotLog::create([
+                            'phone_number' =>$phone_number,
+                           // 'message_id'   =>$message_id,
+                            'text'         =>$thread->label,
+                            'step'         =>$thread->step,
+                            'thread_id'    =>$thread->id,
+                            'type'         =>$thread->thread_type,
+                            'uuid'         =>(string)Str::orderedUuid(),
+                        ]);
+                     }
+
+                    $response =$this->textSms($phone_number,$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng);
                     return $response;
                 }
                 
@@ -208,5 +227,27 @@ trait MessageStep
         }
         
        
+    }
+
+    public function getLanguage($phone_number){
+        $language =UserLanguage::firstOrCreate([
+            'phone_number'=>$phone_number
+        ],
+        [
+            'phone_number'=>$phone_number,
+            'language_type' =>1,
+        ]
+        );
+
+        return $language->language_type;
+    }
+
+    public function changeLanguage($phone_number,$language){
+        UserLanguage::updateOrCreate([
+            'phone_number' =>$phone_number
+        ],
+        [
+            'language_type' =>$language == "Kiswahili" ? 1 : 2 
+        ]);
     }
 }   

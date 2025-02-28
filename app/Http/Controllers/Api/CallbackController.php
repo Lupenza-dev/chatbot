@@ -50,6 +50,7 @@ class CallbackController extends Controller
    
         $type         =$response['entry'][0]['changes'][0]['value']['messages'][0]['type'];
         $reply_id  =null;
+        $body      =null;
         if ($type == "text") {
            // return 67;
             $phone_number =$response['entry'][0]['changes'][0]['value']['messages'][0]['from'];
@@ -98,7 +99,7 @@ class CallbackController extends Controller
             ]);
         }
 
-        $response =$this->analyseThread($logs,$reply_id );
+        $response =$this->analyseThread($logs,$reply_id,$body);
         return $response;
     }
 

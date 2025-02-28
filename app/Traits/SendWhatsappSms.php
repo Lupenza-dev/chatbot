@@ -10,7 +10,7 @@ trait SendWhatsappSms
         foreach ($responses as $key) {
             $rows[] = [
                 'id' => $key->id,
-                'title' => stringClean($key->name_eng),
+                'title' => stringClean($this->getLanguage($phone_number) == 1 ? $key->name_sw: $key->name_eng),
             ];
         }
 
@@ -75,7 +75,7 @@ trait SendWhatsappSms
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer EAAR75ZBS0trABO07xf3csav53qPMW1lZA97qxSNKnJqrR7ebWQqeAi4Ncgeu88Cq7MQZADJTCOf9vZCrlxuOVabCdcbsEZBHIvP1D9BxlwqUaRARzcVz5YdB77UieotDiXYe9cSbfiXZAIpyPfVNZB1BCNpzZAUzkKkvZC7TvikjCHb6UQ3jq0ZB4rM3MTu86yZBRtxsvxx1ZBXBtjbNYYzeWh0qNUZBojEFjQgZDZD',
+            'Authorization' => 'Bearer EAAR75ZBS0trABO4yc6wlQMWfYZC7DOEHiKQYnZADZAkwas71uKmZCMCy0ZBrj000aa2fM8JjPu1sHd9YhUw4ZBsygc0bZAsIlIuwZAxEatT7olUZAtI63J7WZBBmRWW3BVqFESKKMpqmNJZCicOZBm3j5LB1U7Dg9OidMIvaNZAgvEjGGKlmTi5GxwEZBOCDXEs2IppkG5gVQRZAwGysh7ZBmWI0OkA5mZBWSXou8I',
         ])
        // ->post('https://graph.facebook.com/v17.0/115034001648802/messages',$data);
         ->post('https://graph.facebook.com/v22.0/115034001648802/messages',$data);

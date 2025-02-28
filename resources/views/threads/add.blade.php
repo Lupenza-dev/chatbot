@@ -85,14 +85,25 @@
                                        </select>
                                     </div>
                                 </div>
+                                <div class="col-xxl-4 col-md-6">
+                                    <div>
+                                        <label for="readonlyPlaintext" class="form-label">Close Thread</label>
+                                       <select name="close_thread" class="form-control" required>
+                                        <option value="" selected>Please choose Status</option>
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                       </select>
+                                    </div>
+                                </div>
 
-                                <div class="col-xxl-3 col-md-6">
+
+                                {{-- <div class="col-xxl-3 col-md-6">
                                     <div>
                                        
                                         <input type="checkbox" name="back_status" value="Yes" >
                                         <label for="">Back To Main Menu</label>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-xxl-12 col-md-12" id="alert">
 
                                 </div>
