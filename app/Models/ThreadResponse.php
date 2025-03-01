@@ -15,4 +15,8 @@ class ThreadResponse extends Model
         return $this->hasOne(ResponseThreadLink::class,'thread_response_id','id');
     }
 
+    public function thread(){
+        return $this->hasOne(Thread::class,'id','thread_id');
+    }
+
 }

@@ -8,6 +8,8 @@ use App\Models\BotLog;
 use Str;
 use App\Models\ResponseThreadLink;
 use App\Models\UserLanguage;
+use App\Models\BotUserLog;
+use App\Models\ThreadResponse;
 use Log;
 
 
@@ -33,7 +35,7 @@ trait MessageStep
         if ($type  == "text" || $type == "TEXT" || $type == "LIST MESSAGE") {
             ### check thread if exist if not exist means its first screen not to be rendered
             Log::debug("----type ipo ndani--- $type");
-          
+            Log::channel('sms')->debug("=======Block 1 =========");
             $exist_thread =ThreadLink::where('thread_id',$thread_id)->first();
            // $response_thread =ResponseThreadLink::where('thread_response_id',$replied_text_id)->first();
             if ($exist_thread) {
@@ -50,6 +52,9 @@ trait MessageStep
         
                            ###clear open log
                            $this->clearLogs($phone_number);
+                           $log->thread_id =$thread->id;
+                           $log->save();
+                           $this->createUserLog($phone_number,$thread?->title_eng,$title_body);
 
                             ### creatte new log
 
@@ -65,12 +70,19 @@ trait MessageStep
                                 ]);
                             }
                             
-        
+                            Log::channel('sms')->debug("=======Block 1.1  LIST MESSAGE =========");
+                            Log::channel('sms')->debug("=======Block 1.1  $header_text =========");
                             $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                            Log::channel('sms')->debug("=======After sent Block 1.1  $response =========");
                             return $response; 
+                             abort(200);
                         } else {
                              ###clear open log
                         $this->clearLogs($phone_number);
+
+                        $log->thread_id =$thread->id;
+                        $log->save();
+                        $this->createUserLog($phone_number,$thread?->title_eng,$title_body);
 
                         ### creatte new log
                         if (!$thread->close_thread) {
@@ -84,9 +96,15 @@ trait MessageStep
                                 'uuid'         =>(string)Str::orderedUuid(),
                             ]);
                         }
+                        $sent_text =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
+                        Log::channel('sms')->debug("=======Block 1.2 new message   $type =========");
+                        Log::channel('sms')->debug("=======Block 1.2 new message   $sent_text =========");
 
                         $response =$this->textSms($phone_number,$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng);
+                        Log::channel('sms')->debug("=======After sent Block 1.2 new message  $response =========");
+
                         return $response; 
+                         abort(200);
                         }
                         
                     } else {
@@ -95,7 +113,6 @@ trait MessageStep
                          $this->clearLogs($phone_number);
 
                          $response =$this->textSms($phone_number,"Thanks For Contact us We will revert back to you soon"); 
-                         //$response_2 =$this->companyAddress($phone_number);
                          return $response;
                     }
                     
@@ -112,25 +129,39 @@ trait MessageStep
                 Log::debug("---- inatakiwa ipite hapa type ipo reply id--- $reply_id");
 
                    if ($thread->thread_type == "LIST MESSAGE") {
-                       $header_text  =$thread->label;
+                      // $header_text  =$thread->label;
                        $button_label ="Please Select One";
                        $responses    =$thread->responses;
-                   
+                       $header_text   =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
+                       $button_label  =$this->getLanguage($phone_number) == 1 ? "Tafadhali Chagua": "Please Select One";
    
                       ###clear open log
                       $this->clearLogs($phone_number);
-   
+                      $log->thread_id =$thread->id;
+                      $log->save();
+                      $this->createUserLog($phone_number,$thread?->title_eng,$title_body);
+                      Log::channel('sms')->debug("=======Block 1.3 reply id in LIST MESSAGE  HATUPITI new message   $type =========");
+                      Log::channel('sms')->debug("=======Block 1.3  id in LIST MESSAGE HATUPITI   $header_text =========");
                        $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                       Log::channel('sms')->debug("=======After sent Block 1.2 new message  $response =========");
                        return $response; 
+                        abort(200);
    
                    }
-                    else {
-                         ###clear open log
-                       $this->clearLogs($phone_number);
-   
-                       $response =$this->textSms($phone_number,$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng);
-                       return $response;
-                   }
+                //     else {
+                //         $sent_text =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
+                //          ###clear open log
+                //        $this->clearLogs($phone_number);
+                //        $log->thread_id =$thread->id;
+                //        $log->save();
+                //        $this->createUserLog($phone_number,$thread?->title_eng,$title_body);
+                //        Log::channel('sms')->debug("=======Block 1.4 reply id in Not LIST MESSAGE  HATUPITI new message   $type =========");
+                //        Log::channel('sms')->debug("=======Block 1.4  id in NOT LIST MESSAGE HATUPITI   $sent_text =========");
+                //        $response =$this->textSms($phone_number,$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng);
+                //        Log::channel('sms')->debug("=======After sent Block 1.4 new message  $response =========");
+
+                //        return $response;
+                //    }
                    
                   
                } else {
@@ -148,8 +179,14 @@ trait MessageStep
                     $responses    =$thread->responses;
                      ###clear open log
                      $this->clearLogs($phone_number);
+
+                     $this->createUserLog($phone_number,'request',$title_body);
+                     Log::channel('sms')->debug("=======Block 1.5  new message   $type =========");
+                     Log::channel('sms')->debug("=======Block 1.5  new message   $header_text =========");
         
                     $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                    Log::channel('sms')->debug("=======After sent Block 1.5 new message  $response =========");
+
                     return $response;
                 }
                
@@ -167,9 +204,15 @@ trait MessageStep
                 $button_label  =$this->getLanguage($phone_number) == 1 ? "Chagua Huduma": "Choose Service";
                 $responses    =$thread->responses;
                  ###clear open log
+                 $reply_thread =ThreadResponse::with('thread')->where('id',$reply_id)->first();
+                 $log->thread_id =$reply_thread->thread_id;
+                 $log->save();
                  $this->clearLogs($phone_number);
-    
+                 $this->createUserLog($phone_number,$reply_thread->thread?->title_sw,$title_body);
+                 Log::channel('sms')->debug("=======Block 2  new message   $type =========");
+                 Log::channel('sms')->debug("=======Block 2  new message   $header_text =========");
                 $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                Log::channel('sms')->debug("=======After sent Block 2 new message  $response =========");
                 return $response;
 
 
@@ -182,7 +225,6 @@ trait MessageStep
                 $thread =Thread::with('responses')->where('id',$response_thread->thread_id)->first();
 
                 if ($thread->thread_type == "LIST MESSAGE") {
-                    $header_text  =$thread->label;
                     $header_text  =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
                     $button_label  =$this->getLanguage($phone_number) == 1 ? "Tafadhali Chagua": "Please Select One";
                     $responses    =$thread->responses;
@@ -191,13 +233,24 @@ trait MessageStep
                    ###clear open log
                    $this->clearLogs($phone_number);
 
+                   $log->thread_id =$response_thread->thread_id;
+                   $log->save();
+                   $this->createUserLog($phone_number,$thread?->title_eng,$title_body);
+                   Log::channel('sms')->debug("=======Block 2.1  new message   $type =========");
+                   Log::channel('sms')->debug("=======Block 2.1  new message   $header_text =========");
+
                     $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
+                    Log::channel('sms')->debug("=======After sent Block 2.1 new message  $response =========");
+
                     return $response; 
+                     abort(200);
 
                 } else {
                       ###clear open log
                     $this->clearLogs($phone_number);
-
+                    $log->thread_id =$response_thread->thread_id;
+                    $log->save();
+                    $this->createUserLog($phone_number,$thread?->title_eng,$title_body);
                      ### creatte new log
 
                      if (!$thread->close_thread) {
@@ -211,8 +264,13 @@ trait MessageStep
                             'uuid'         =>(string)Str::orderedUuid(),
                         ]);
                      }
+                     $sent_text =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
+                     Log::channel('sms')->debug("=======Block 2.2  new message   $type =========");
+                     Log::channel('sms')->debug("=======Block 2.2  new message   $sent_text =========");
 
                     $response =$this->textSms($phone_number,$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng);
+                    Log::channel('sms')->debug("=======After sent Block 2.2 new message  $response =========");
+
                     return $response;
                 }
                 
@@ -225,6 +283,9 @@ trait MessageStep
          else {
             ### if other type increase we have to add here
         }
+        Log::channel('sms')->debug("=======OUT OF BLOCKS=========");
+
+        return  http_response_code(200);
         
        
     }
@@ -249,5 +310,40 @@ trait MessageStep
         [
             'language_type' =>$language == "Kiswahili" ? 1 : 2 
         ]);
+    }
+
+    public function createUserLog($phone_number,$thread,$body){
+        $data =[
+            'thread' =>$thread,
+            'answer' =>$body
+        ];
+        Log::debug("======saved====== user logs");
+        Log::debug($data);
+        $check_log =BotUserLog::where('phone_number',$phone_number)->where('is_active',true)->latest()->first();
+        if ($check_log) {
+            // Update
+            $existing_log = json_decode($check_log->log, true);
+            // Ensure it's an array before merging
+            if (!is_array($existing_log)) {
+                $existing_log = [];
+            }
+
+            // Append the new data
+            $existing_log[] = $data;
+
+            // Update the log
+            $check_log->update([
+                'log' => json_encode($existing_log)
+            ]);
+        } else {
+            # create new user Log
+            BotUserLog::create([
+                'phone_number' =>$phone_number,
+                'log'          =>json_encode($data)
+            ]);
+        }
+
+        return true;
+        
     }
 }   

@@ -2,6 +2,8 @@
 namespace App\Traits;
 use Http;
 use Log;
+use App\Models\BotUserAnswer;
+
 
 trait SendWhatsappSms
 {
@@ -39,6 +41,7 @@ trait SendWhatsappSms
         //$json_data = json_encode($data);
         //return $json_data;
        // Log::debug($data);
+       $this->createBotThread($phone_number,$header_text);
        $response =$this->sendSms($data);
 
        // return $response;
@@ -65,6 +68,7 @@ trait SendWhatsappSms
        // return $json_data;
 
        // Log::debug($data);
+        $this->createBotThread($phone_number,$message);
         $response =$this->sendSms($data);
 
        // return $response;
@@ -75,7 +79,7 @@ trait SendWhatsappSms
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer EAAR75ZBS0trABO4yc6wlQMWfYZC7DOEHiKQYnZADZAkwas71uKmZCMCy0ZBrj000aa2fM8JjPu1sHd9YhUw4ZBsygc0bZAsIlIuwZAxEatT7olUZAtI63J7WZBBmRWW3BVqFESKKMpqmNJZCicOZBm3j5LB1U7Dg9OidMIvaNZAgvEjGGKlmTi5GxwEZBOCDXEs2IppkG5gVQRZAwGysh7ZBmWI0OkA5mZBWSXou8I',
+            'Authorization' => 'Bearer EAAR75ZBS0trABOzdLdD7ZCtDZCIO1HhwzWlmOX7oMmSTRpiqF1T5jyrTJzBydbJfjg3qvxXppOZAWKWamsJL2kl4kE1c21Qp5LAy9lOsjLnv5pQjp12hdcTBQqVUiZB3mo4ZA0Uw5ebu57EI6ejqQmEaqxZCJVN4k9EyNHZAra8sBxBygpNinBNoULgnU0cpm4ZCnFF2sUDZAB4V74x6MhSkfyqynNjekZD',
         ])
        // ->post('https://graph.facebook.com/v17.0/115034001648802/messages',$data);
         ->post('https://graph.facebook.com/v22.0/115034001648802/messages',$data);
@@ -91,71 +95,15 @@ trait SendWhatsappSms
        // return $responseData;
     }
 
-    public function companyAddress($phone_number) {
 
-        $data = [
-            'messaging_product' => 'whatsapp',
-            'recipient_type' => 'individual',
-            'to' => $phone_number,
-            "type" => "contacts",
-            "contacts" => [
-                [
-                    "addresses" => [
-                        [
-                            "street" => "Salamander Tower , 6th Floor",
-                            "city" => "Dar es salaam",
-                            "country" => "Tanzania"
-                        ]
-                    ],
-                    "emails" => [
-                        [
-                            "email" => "info@gsafrica.co.tz",
-                            "type" => "WORK"
-                        ],
-                        [
-                            "email" => "bookings@gsafrica.co.tz",
-                            "type" => "WORK"
-                        ]
-                    ],
-                    'name' => [
-                        'formatted_name' => 'GsAfrica',
-                        'first_name' => 'FIRST_NAME',
-                        'last_name' => 'LAST_NAME',
-                        'middle_name' => 'MIDDLE_NAME',
-                        'suffix' => 'SUFFIX',
-                        'prefix' => 'PREFIX',
-                    ],
-                    "org" => [
-                        "company" => "GsAfrica",
-                        "department" => "Africa Travel & logistic"
-                    ],
-                    "phones" => [
-                        [
-                            "phone" => "+255759104003"
-                        ],
-                        [
-                            "phone" => "+255712813505",
-                            "wa_id" => "PHONE_OR_WA_ID"
-                        ]
-                    ],
-                    "urls" => [
-                        [
-                            "url" => "https://gsafrica.co.tz/"
-                        ],
-                        [
-                            "url" => "https://gsexplore.co.tz/"
-                        ]
-                    ]
-                ]
-            ],
-        ];
-
-       // $json_data = json_encode($data);
-        Log::debug($data);
-        $response =$this->sendSms($data);
-
-       // return $response;
-
-        //return $json_data;
+    public function createBotThread($phone_number,$thread){
+        $check =BotUserAnswer::where('phone_number',$phone_number)->where('thread',$thread)->where('is_active',1)->first();
+        if (!$check) {
+            BotUserAnswer::create([
+                'phone_number' =>$phone_number,
+                'thread'       =>$thread
+               ]);
+        }
+      
     }
 }

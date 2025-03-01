@@ -8,8 +8,10 @@ use App\Traits\MessageStep;
 use App\Traits\SendWhatsappSms;
 use App\Traits\BotLogTrait;
 use App\Models\BotLog;
+use App\Models\BotUserAnswer;
 use Str;
 use Log;
+use PhpParser\Node\Stmt\If_;
 
 class CallbackController extends Controller
 {
@@ -98,7 +100,7 @@ class CallbackController extends Controller
                 // 'status'       =>"OPEN"
             ]);
         }
-
+        $this->saveReplies($phone_number,$body);
         $response =$this->analyseThread($logs,$reply_id,$body);
         return $response;
     }
@@ -106,5 +108,14 @@ class CallbackController extends Controller
         return http_response_code(200);
        
         
+    }
+
+    public function saveReplies($phone_number,$body){
+        $bot =BotUserAnswer::where('phone_number',$phone_number)->where('is_active',true)->latest()->first();
+        if ($bot) {
+            $bot->answer    =$body;
+            $bot->is_active =false;
+            $bot->save();
+        }
     }
 }

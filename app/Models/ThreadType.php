@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class ThreadType extends Model
 {
     use HasFactory;
+
 }
