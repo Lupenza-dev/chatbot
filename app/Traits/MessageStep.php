@@ -119,7 +119,7 @@ trait MessageStep
 
                  
             }
-            else if($reply_id) {
+            else if($reply_id and $type != "interactive") {
                 ## Reply ID Ipo On LIST MESSAGE  
                // goto a;
                $response_thread =ResponseThreadLink::where('thread_response_id',$reply_id)->first();
@@ -142,8 +142,10 @@ trait MessageStep
                       $this->createUserLog($phone_number,$thread?->title_eng,$title_body);
                       Log::channel('sms')->debug("=======Block 1.3 reply id in LIST MESSAGE  HATUPITI new message   $type =========");
                       Log::channel('sms')->debug("=======Block 1.3  id in LIST MESSAGE HATUPITI   $header_text =========");
+                      Log::channel('sms')->debug("=======Block 1.3  message ID   $log->message_id =========");
+                      Log::channel('sms')->debug("=======Block 1.3  message Type   $type =========");
                        $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
-                       Log::channel('sms')->debug("=======After sent Block 1.2 new message  $response =========");
+                       Log::channel('sms')->debug("=======After sent Block 1.3 new message  $response =========");
                        return $response; 
                         abort(200);
    
@@ -164,9 +166,7 @@ trait MessageStep
                 //    }
                    
                   
-               } else {
-                   # code...
-               }
+               } 
             }
             else {
                 ### New Conversation
@@ -224,7 +224,7 @@ trait MessageStep
             if ($response_thread) {
                 $thread =Thread::with('responses')->where('id',$response_thread->thread_id)->first();
 
-                if ($thread->thread_type == "LIST MESSAGE") {
+                if ($thread->thread_type == "LIST MESSAGE" and $type != "interactive") {
                     $header_text  =$this->getLanguage($phone_number) == 1 ? $thread->title_sw: $thread->title_eng;
                     $button_label  =$this->getLanguage($phone_number) == 1 ? "Tafadhali Chagua": "Please Select One";
                     $responses    =$thread->responses;
@@ -238,6 +238,7 @@ trait MessageStep
                    $this->createUserLog($phone_number,$thread?->title_eng,$title_body);
                    Log::channel('sms')->debug("=======Block 2.1  new message   $type =========");
                    Log::channel('sms')->debug("=======Block 2.1  new message   $header_text =========");
+                   Log::channel('sms')->debug("=======Block 2.1  new message type   $type =========");
 
                     $response =$this->interactiveSms($phone_number,$header_text,$button_label,$responses);
                     Log::channel('sms')->debug("=======After sent Block 2.1 new message  $response =========");
@@ -290,7 +291,7 @@ trait MessageStep
        
     }
 
-    public function getLanguage($phone_number){
+    public function getLanguage2($phone_number){
         $language =UserLanguage::firstOrCreate([
             'phone_number'=>$phone_number
         ],
@@ -303,7 +304,7 @@ trait MessageStep
         return $language->language_type;
     }
 
-    public function changeLanguage($phone_number,$language){
+    public function changeLanguage2($phone_number,$language){
         UserLanguage::updateOrCreate([
             'phone_number' =>$phone_number
         ],

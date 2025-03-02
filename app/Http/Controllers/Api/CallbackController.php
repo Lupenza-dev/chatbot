@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\MessageStep;
 use App\Traits\SendWhatsappSms;
 use App\Traits\BotLogTrait;
+use App\Traits\BotMessageStep;
 use App\Models\BotLog;
 use App\Models\BotUserAnswer;
 use Str;
@@ -15,7 +16,7 @@ use PhpParser\Node\Stmt\If_;
 
 class CallbackController extends Controller
 {
-    use MessageStep , SendWhatsappSms ,BotLogTrait;
+    use MessageStep , SendWhatsappSms ,BotLogTrait,BotMessageStep;
 
     public function whatsappCallback(Request $request){
         Log::debug(request()->all());
@@ -77,32 +78,34 @@ class CallbackController extends Controller
 
         ## check id
 
-        $message_exist =BotLog::where('message_id',$message_id)->first();
+        return $this->threadAnalyser($phone_number,$message_id, $type,$body,$reply_id);
 
-        if ($message_exist) {
-            $message_exist->status ="CLOSED";
-            $message_exist->save();
-            return http_response_code(200);  
-        }
+        // $message_exist =BotLog::where('message_id',$message_id)->first();
+
+        // if ($message_exist) {
+        //     $message_exist->status ="CLOSED";
+        //     $message_exist->save();
+        //     return http_response_code(200);  
+        // }
         
-        $logs =BotLog::where('phone_number',$phone_number)->where('status','OPEN')->first();
+        // $logs =BotLog::where('phone_number',$phone_number)->where('status','OPEN')->first();
 
-        if (!$logs) {
-            $logs =BotLog::create([
-                'phone_number' =>$phone_number,
-                'message_id'   =>$message_id,
-                'text'         =>$body,
-                'reply_id'     =>$reply_id ?? null,
-                'step'         =>1,
-                'thread_id'    =>1,
-                'type'         =>$type,
-                'uuid'         =>(string)Str::orderedUuid(),
-                // 'status'       =>"OPEN"
-            ]);
-        }
-        $this->saveReplies($phone_number,$body);
-        $response =$this->analyseThread($logs,$reply_id,$body);
-        return $response;
+        // if (!$logs) {
+        //     $logs =BotLog::create([
+        //         'phone_number' =>$phone_number,
+        //         'message_id'   =>$message_id,
+        //         'text'         =>$body,
+        //         'reply_id'     =>$reply_id ?? null,
+        //         'step'         =>1,
+        //         'thread_id'    =>1,
+        //         'type'         =>$type,
+        //         'uuid'         =>(string)Str::orderedUuid(),
+        //         // 'status'       =>"OPEN"
+        //     ]);
+        // }
+        // $this->saveReplies($phone_number,$body);
+        // $response =$this->analyseThread($logs,$reply_id,$body);
+        // return $response;
     }
 
         return http_response_code(200);

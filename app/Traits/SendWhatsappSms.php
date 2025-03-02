@@ -79,7 +79,7 @@ trait SendWhatsappSms
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer EAAR75ZBS0trABOzdLdD7ZCtDZCIO1HhwzWlmOX7oMmSTRpiqF1T5jyrTJzBydbJfjg3qvxXppOZAWKWamsJL2kl4kE1c21Qp5LAy9lOsjLnv5pQjp12hdcTBQqVUiZB3mo4ZA0Uw5ebu57EI6ejqQmEaqxZCJVN4k9EyNHZAra8sBxBygpNinBNoULgnU0cpm4ZCnFF2sUDZAB4V74x6MhSkfyqynNjekZD',
+            'Authorization' => 'Bearer EAAR75ZBS0trABO0tpLfOGvZB5evagAvAxtAMbYS0logFJ2rB2qkTrRDcZBbFycbTT2NZBjElsYSosV79DJWZBAjwAmjvqs9Qiw06w3PKGSWieMxmZBFEfCGHN1kZCySRNUyN2lePaAFTc7v449TBAjR9hEZCZAZC6GzZCM0DrQ5Ae381wzF4ZCEp86B03eztUipYuaSOhhHZARa8ZCj4YNMLd1TjVswDQ13XsZD',
         ])
        // ->post('https://graph.facebook.com/v17.0/115034001648802/messages',$data);
         ->post('https://graph.facebook.com/v22.0/115034001648802/messages',$data);
