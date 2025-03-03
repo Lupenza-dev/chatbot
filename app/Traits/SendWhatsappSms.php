@@ -79,7 +79,7 @@ trait SendWhatsappSms
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer EAAR75ZBS0trABO0tpLfOGvZB5evagAvAxtAMbYS0logFJ2rB2qkTrRDcZBbFycbTT2NZBjElsYSosV79DJWZBAjwAmjvqs9Qiw06w3PKGSWieMxmZBFEfCGHN1kZCySRNUyN2lePaAFTc7v449TBAjR9hEZCZAZC6GzZCM0DrQ5Ae381wzF4ZCEp86B03eztUipYuaSOhhHZARa8ZCj4YNMLd1TjVswDQ13XsZD',
+            'Authorization' => 'Bearer EAAR75ZBS0trABOw0mIEzmQ2z2p2u0ECT0hCJGB0NGLdp1B2acnQBae9WEyGWqBCU1ZAAXZCPm7ZC3NbYBDDaqYVmpWoGHnXxm0HfZCygBwprlTZCer41xkUeG5qYjMAR0yGeFsKlbE1aI1Wc2VtPBEX50poD98zoSfZBRiiPyL4e4bUtRgTQct3Q86MTyKJNyzbHMl5Y2oClu0YZCsda55NuIOHGE58ZD',
         ])
        // ->post('https://graph.facebook.com/v17.0/115034001648802/messages',$data);
         ->post('https://graph.facebook.com/v22.0/115034001648802/messages',$data);
@@ -90,8 +90,8 @@ trait SendWhatsappSms
         // Retrieve the response
         $responseData = $response->json();
         Log::debug($responseData);
-
-        return  http_response_code(200);
+        return response()->json(['status' => 'ok'], 200);
+      //  return  http_response_code(200);
        // return $responseData;
     }
 

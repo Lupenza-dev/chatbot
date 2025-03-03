@@ -313,7 +313,7 @@ trait MessageStep
         ]);
     }
 
-    public function createUserLog($phone_number,$thread,$body){
+    public function createUserLog2($phone_number,$thread,$body){
         $data =[
             'thread' =>$thread,
             'answer' =>$body

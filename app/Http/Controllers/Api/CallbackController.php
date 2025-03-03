@@ -10,6 +10,7 @@ use App\Traits\BotLogTrait;
 use App\Traits\BotMessageStep;
 use App\Models\BotLog;
 use App\Models\BotUserAnswer;
+use Illuminate\Support\Facades\Cache;
 use Str;
 use Log;
 use PhpParser\Node\Stmt\If_;
@@ -77,6 +78,20 @@ class CallbackController extends Controller
         }
 
         ## check id
+        // $cachedMessageId = Cache::get('message_id');
+        // Log::channel('sms')->debug("=====message ID Cached $cachedMessageId");
+        // Log::channel('sms')->debug("=====message ID Really  $message_id");
+        // if ($cachedMessageId == $message_id) {
+        //     return response()->json(['status' => 'ok'], 200);
+        // }
+
+        if (Cache::has("whatsapp_message_{$message_id}")) {
+            Log::channel('sms')->debug("===== Duplicate Message ID Detected: $message_id");
+    
+            return response()->json(['status' => 'ok'], 200);
+        }
+    
+    
 
         return $this->threadAnalyser($phone_number,$message_id, $type,$body,$reply_id);
 

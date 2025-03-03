@@ -69,7 +69,14 @@
                                 <div class="col-xxl-4 col-md-6">
                                     <div>
                                         <label for="placeholderInput" class="form-label">Flag</label>
-                                        <input type="text" name="flag" class="form-control" id="placeholderInput" value="{{ $thread->flag}}" required>
+                                        {{-- <input type="text" name="flag" class="form-control" id="placeholderInput" value="{{ $thread->flag}}" required> --}}
+                                        <select name="flag" class="form-control" required>
+                                            <option value="{{ $thread->flag}}" selected>{{ $thread->flag}}</option>
+                                            <option value="WCF_NUMBER" >WCF_NUMBER</option>
+                                            <option value="WCF_USER">WCF_USER</option>
+                                            <option value="WCF_CONTROL_NUMBER">WCF_CONTROL_NUMBER</option>
+                                            <option value="None">None</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <!--end col-->
@@ -87,7 +94,6 @@
                                         <option value="" selected>Please choose message type</option>
                                         @foreach ($thread_types as $item)
                                         <option value="{{ $item->name}}" {{ $item->name == $thread->thread_type ? "selected":""}}>{{ $item->name }}</option>
-                                            
                                         @endforeach
                                        </select>
                                     </div>
@@ -96,7 +102,7 @@
                                     <div>
                                         <label for="readonlyPlaintext" class="form-label">Close Thread</label>
                                        <select name="close_thread" class="form-control" required>
-                                        <option value="{{ $thread->closed_thread }}" selected>{{ $thread->closed_thread ? "Yes" : "No" }}</option>
+                                        <option value="{{ $thread->closed_thread ? 1 : 0 }}" selected>{{ $thread->closed_thread ? "Yes": "No"  }}</option>
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
                                        </select>

@@ -68,7 +68,13 @@
                                 <div class="col-xxl-4 col-md-6">
                                     <div>
                                         <label for="placeholderInput" class="form-label">Flag</label>
-                                        <input type="text" name="flag" class="form-control" id="placeholderInput" placeholder="Write flag" required>
+                                        {{-- <input type="text" name="flag" class="form-control" id="placeholderInput" placeholder="Write flag" required> --}}
+                                        <select name="flag" class="form-control" required>
+                                            <option value="None" selected>None</option>
+                                            <option value="WCF_NUMBER" >WCF_NUMBER</option>
+                                            <option value="WCF_USER">WCF_USER</option>
+                                            <option value="WCF_CONTROL_NUMBER">WCF_CONTROL_NUMBER</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <!--end col-->
